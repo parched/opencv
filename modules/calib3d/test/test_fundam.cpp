@@ -1303,11 +1303,12 @@ void CV_EssentialMatTest::run_func()
 
     E.copyTo(test_mat[TEMP][0]);
 
-    Mat R, t, mask2;
-    recoverPose( E, _input0, _input1, R, t, mask2 );
+    Mat R, t, U, mask2;
+    recoverPose( E, _input0, _input1, R, t, U, mask2 );
     R.copyTo(test_mat[TEMP][2]);
     t.copyTo(test_mat[TEMP][3]);
-    mask2.copyTo(test_mat[TEMP][4]);
+    U.copyTo(test_mat[TEMP][4]);
+    mask2.copyTo(test_mat[TEMP][5]);
 }
 
 double CV_EssentialMatTest::sampson_error(const double * f, double x1, double y1, double x2, double y2)

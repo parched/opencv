@@ -427,7 +427,7 @@ cv::Mat cv::findEssentialMat( InputArray _points1, InputArray _points2,
 }
 
 int cv::recoverPose( InputArray E, InputArray _points1, InputArray _points2, OutputArray _R,
-                     OutputArray _t, InputOutputArray _mask)
+                     OutputArray _t, OutputArray _U, InputOutputArray _mask)
 {
     Mat points1, points2;
     _points1.getMat().copyTo(points1);
@@ -463,47 +463,51 @@ int cv::recoverPose( InputArray E, InputArray _points1, InputArray _points2, Out
     // there depth may vary between postive and negtive.
     double dist = 50.0;
     Mat Q;
-    triangulatePoints(P0, P1, points1, points2, Q);
-    Mat mask1 = Q.row(2).mul(Q.row(3)) > 0;
-    Q.row(0) /= Q.row(3);
-    Q.row(1) /= Q.row(3);
-    Q.row(2) /= Q.row(3);
-    Q.row(3) /= Q.row(3);
-    mask1 = (Q.row(2) < dist) & mask1;
-    Q = P1 * Q;
+    Mat U1;
+    triangulatePoints(P0, P1, points1, points2, U1);
+    Mat mask1 = U1.row(2).mul(U1.row(3)) > 0;
+    U1.row(0) /= U1.row(3);
+    U1.row(1) /= U1.row(3);
+    U1.row(2) /= U1.row(3);
+    U1.row(3) /= U1.row(3);
+    mask1 = (U1.row(2) < dist) & mask1;
+    Q = P1 * U1;
     mask1 = (Q.row(2) > 0) & mask1;
     mask1 = (Q.row(2) < dist) & mask1;
 
-    triangulatePoints(P0, P2, points1, points2, Q);
-    Mat mask2 = Q.row(2).mul(Q.row(3)) > 0;
-    Q.row(0) /= Q.row(3);
-    Q.row(1) /= Q.row(3);
-    Q.row(2) /= Q.row(3);
-    Q.row(3) /= Q.row(3);
-    mask2 = (Q.row(2) < dist) & mask2;
-    Q = P2 * Q;
+    Mat U2;
+    triangulatePoints(P0, P2, points1, points2, U2);
+    Mat mask2 = U2.row(2).mul(U2.row(3)) > 0;
+    U2.row(0) /= U2.row(3);
+    U2.row(1) /= U2.row(3);
+    U2.row(2) /= U2.row(3);
+    U2.row(3) /= U2.row(3);
+    mask2 = (U2.row(2) < dist) & mask2;
+    Q = P2 * U2;
     mask2 = (Q.row(2) > 0) & mask2;
     mask2 = (Q.row(2) < dist) & mask2;
 
-    triangulatePoints(P0, P3, points1, points2, Q);
-    Mat mask3 = Q.row(2).mul(Q.row(3)) > 0;
-    Q.row(0) /= Q.row(3);
-    Q.row(1) /= Q.row(3);
-    Q.row(2) /= Q.row(3);
-    Q.row(3) /= Q.row(3);
-    mask3 = (Q.row(2) < dist) & mask3;
-    Q = P3 * Q;
+    Mat U3;
+    triangulatePoints(P0, P3, points1, points2, U3);
+    Mat mask3 = U3.row(2).mul(U3.row(3)) > 0;
+    U3.row(0) /= U3.row(3);
+    U3.row(1) /= U3.row(3);
+    U3.row(2) /= U3.row(3);
+    U3.row(3) /= U3.row(3);
+    mask3 = (U3.row(2) < dist) & mask3;
+    Q = P3 * U3;
     mask3 = (Q.row(2) > 0) & mask3;
     mask3 = (Q.row(2) < dist) & mask3;
 
-    triangulatePoints(P0, P4, points1, points2, Q);
-    Mat mask4 = Q.row(2).mul(Q.row(3)) > 0;
-    Q.row(0) /= Q.row(3);
-    Q.row(1) /= Q.row(3);
-    Q.row(2) /= Q.row(3);
-    Q.row(3) /= Q.row(3);
-    mask4 = (Q.row(2) < dist) & mask4;
-    Q = P4 * Q;
+    Mat U4;
+    triangulatePoints(P0, P4, points1, points2, U4);
+    Mat mask4 = U4.row(2).mul(U4.row(3)) > 0;
+    U4.row(0) /= U4.row(3);
+    U4.row(1) /= U4.row(3);
+    U4.row(2) /= U4.row(3);
+    U4.row(3) /= U4.row(3);
+    mask4 = (U4.row(2) < dist) & mask4;
+    Q = P4 * U4;
     mask4 = (Q.row(2) > 0) & mask4;
     mask4 = (Q.row(2) < dist) & mask4;
 
@@ -535,6 +539,7 @@ int cv::recoverPose( InputArray E, InputArray _points1, InputArray _points2, Out
     {
         R1.copyTo(_R);
         t.copyTo(_t);
+        if (_U.needed()) U1.copyTo(_U);
         if (_mask.needed()) mask1.copyTo(_mask);
         return good1;
     }
@@ -542,6 +547,7 @@ int cv::recoverPose( InputArray E, InputArray _points1, InputArray _points2, Out
     {
         R2.copyTo(_R);
         t.copyTo(_t);
+        if (_U.needed()) U2.copyTo(_U);
         if (_mask.needed()) mask2.copyTo(_mask);
         return good2;
     }
@@ -550,6 +556,7 @@ int cv::recoverPose( InputArray E, InputArray _points1, InputArray _points2, Out
         t = -t;
         R1.copyTo(_R);
         t.copyTo(_t);
+        if (_U.needed()) U3.copyTo(_U);
         if (_mask.needed()) mask3.copyTo(_mask);
         return good3;
     }
@@ -558,6 +565,7 @@ int cv::recoverPose( InputArray E, InputArray _points1, InputArray _points2, Out
         t = -t;
         R2.copyTo(_R);
         t.copyTo(_t);
+        if (_U.needed()) U4.copyTo(_U);
         if (_mask.needed()) mask4.copyTo(_mask);
         return good4;
     }
