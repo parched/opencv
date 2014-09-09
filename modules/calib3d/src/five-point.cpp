@@ -402,8 +402,8 @@ protected:
 }
 
 // Input should be a vector of n 2D points or a Nx2 matrix
-cv::Mat cv::findEssentialMat( InputArray _points1, InputArray _points2, double focal, Point2d pp,
-                              int method, double prob, double threshold, OutputArray _mask)
+cv::Mat cv::findEssentialMat( InputArray _points1, InputArray _points2,
+                              int method, double threshold, double prob, OutputArray _mask)
 {
     Mat points1, points2;
     _points1.getMat().convertTo(points1, CV_64F);
@@ -413,26 +413,9 @@ cv::Mat cv::findEssentialMat( InputArray _points1, InputArray _points2, double f
     CV_Assert( npoints >= 5 && points2.checkVector(2) == npoints &&
                               points1.type() == points2.type());
 
-    if( points1.channels() > 1 )
-    {
-        points1 = points1.reshape(1, npoints);
-        points2 = points2.reshape(1, npoints);
-    }
-
-    double ifocal = focal != 0 ? 1./focal : 1.;
-    for( int i = 0; i < npoints; i++ )
-    {
-        points1.at<double>(i, 0) = (points1.at<double>(i, 0) - pp.x)*ifocal;
-        points1.at<double>(i, 1) = (points1.at<double>(i, 1) - pp.y)*ifocal;
-        points2.at<double>(i, 0) = (points2.at<double>(i, 0) - pp.x)*ifocal;
-        points2.at<double>(i, 1) = (points2.at<double>(i, 1) - pp.y)*ifocal;
-    }
-
     // Reshape data to fit opencv ransac function
     points1 = points1.reshape(2, npoints);
     points2 = points2.reshape(2, npoints);
-
-    threshold /= focal;
 
     Mat E;
     if( method == RANSAC )

@@ -1296,7 +1296,8 @@ void CV_EssentialMatTest::run_func()
 
     RNG& rng = ts->get_rng();
     Mat E, mask1(test_mat[TEMP][1]);
-    E = cv::findEssentialMat( _input0, _input1, focal, pp, method, 0.99, MAX(sigma*3, 0.0001), mask1 );
+    E = cv::findEssentialMat( _input0, _input1, method, MAX(sigma*3, 0.0001), 0.99, mask1 );
+    E = K.t() * E * K;
     if (E.rows > 3)
     {
         int count = E.rows / 3;

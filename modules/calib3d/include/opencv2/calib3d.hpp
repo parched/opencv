@@ -266,9 +266,9 @@ CV_EXPORTS Mat findFundamentalMat( InputArray points1, InputArray points2,
 
 //! finds essential matrix from a set of corresponding 2D points using five-point algorithm
 CV_EXPORTS_W Mat findEssentialMat( InputArray points1, InputArray points2,
-                                 double focal = 1.0, Point2d pp = Point2d(0, 0),
-                                 int method = RANSAC, double prob = 0.999,
-                                 double threshold = 1.0, OutputArray mask = noArray() );
+                                 int method = RANSAC,
+                                 double threshold = 1.0, double prob = 0.999, 
+                                 OutputArray mask = noArray() );
 
 //! decompose essential matrix to possible rotation matrix and one translation vector
 CV_EXPORTS_W void decomposeEssentialMat( InputArray E, OutputArray R1, OutputArray R2, OutputArray t );
