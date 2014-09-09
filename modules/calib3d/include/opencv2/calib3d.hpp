@@ -276,7 +276,6 @@ CV_EXPORTS_W void decomposeEssentialMat( InputArray E, OutputArray R1, OutputArr
 //! recover relative camera pose from a set of corresponding 2D points
 CV_EXPORTS_W int recoverPose( InputArray E, InputArray points1, InputArray points2,
                             OutputArray R, OutputArray t,
-                            double focal = 1.0, Point2d pp = Point2d(0, 0),
                             InputOutputArray mask = noArray() );
 
 

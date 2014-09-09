@@ -427,7 +427,7 @@ cv::Mat cv::findEssentialMat( InputArray _points1, InputArray _points2,
 }
 
 int cv::recoverPose( InputArray E, InputArray _points1, InputArray _points2, OutputArray _R,
-                     OutputArray _t, double focal, Point2d pp, InputOutputArray _mask)
+                     OutputArray _t, InputOutputArray _mask)
 {
     Mat points1, points2;
     _points1.getMat().copyTo(points1);
@@ -444,11 +444,6 @@ int cv::recoverPose( InputArray E, InputArray _points1, InputArray _points2, Out
     }
     points1.convertTo(points1, CV_64F);
     points2.convertTo(points2, CV_64F);
-
-    points1.col(0) = (points1.col(0) - pp.x) / focal;
-    points2.col(0) = (points2.col(0) - pp.x) / focal;
-    points1.col(1) = (points1.col(1) - pp.y) / focal;
-    points2.col(1) = (points2.col(1) - pp.y) / focal;
 
     points1 = points1.t();
     points2 = points2.t();

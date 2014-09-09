@@ -1290,14 +1290,10 @@ int CV_EssentialMatTest::prepare_test_case( int test_case_idx )
 void CV_EssentialMatTest::run_func()
 {
     Mat _input0(test_mat[INPUT][0]), _input1(test_mat[INPUT][1]);
-    Mat K(test_mat[INPUT][4]);
-    double focal(K.at<double>(0, 0));
-    cv::Point2d pp(K.at<double>(0, 2), K.at<double>(1, 2));
 
     RNG& rng = ts->get_rng();
     Mat E, mask1(test_mat[TEMP][1]);
     E = cv::findEssentialMat( _input0, _input1, method, MAX(sigma*3, 0.0001), 0.99, mask1 );
-    E = K.t() * E * K;
     if (E.rows > 3)
     {
         int count = E.rows / 3;
@@ -1308,7 +1304,7 @@ void CV_EssentialMatTest::run_func()
     E.copyTo(test_mat[TEMP][0]);
 
     Mat R, t, mask2;
-    recoverPose( E, _input0, _input1, R, t, focal, pp, mask2 );
+    recoverPose( E, _input0, _input1, R, t, mask2 );
     R.copyTo(test_mat[TEMP][2]);
     t.copyTo(test_mat[TEMP][3]);
     mask2.copyTo(test_mat[TEMP][4]);
