@@ -96,9 +96,11 @@ operation for each of the coordinates. Besides the class members listed in the d
         pt1 = pt2 - pt3;
         pt1 = pt2 * a;
         pt1 = a * pt2;
+        pt1 = pt2 / a;
         pt1 += pt2;
         pt1 -= pt2;
         pt1 *= a;
+        pt1 /= a;
         double value = norm(pt); // L2 norm
         pt1 == pt2;
         pt1 != pt2;
@@ -264,8 +266,8 @@ OpenCV typically assumes that the top and left boundary of the rectangle are inc
 Virtually every loop over an image
 ROI in OpenCV (where ROI is specified by ``Rect_<int>`` ) is implemented as: ::
 
-    for(int y = roi.y; y < roi.y + rect.height; y++)
-        for(int x = roi.x; x < roi.x + rect.width; x++)
+    for(int y = roi.y; y < roi.y + roi.height; y++)
+        for(int x = roi.x; x < roi.x + roi.width; x++)
         {
             // ...
         }
